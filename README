@@ -1,0 +1,40 @@
+Copyright (c) 2011, Patrick D. Logan
+All rights reserved.
+
+See COPYING for more information. The license is the "new and
+simplified BSD license" See
+http://www.opensource.org/licenses/bsd-license
+
+================================================================
+Dependencies
+
+* Install java 6
+* Download Armed Bear Common Lisp
+* Download WebDriver (bundled into selenium-java-2.0b3.zip)
+* Copy abcl.jar, selenium-java-2.0b3.jar, and the selenium-2 dependencies to ./lib
+* Install and run a web server serving files from ./public (in this example, using port 8080)
+
+================================================================
+CLASSPATH And Starting A Repl
+
+Set the classpath to include the jars in lib/ 
+
+This can be done in bash easily by turning off globbing:
+
+set -o noglob
+export CLASSPATH=/home/patrick/dev/abcl-webdriver/lib/*
+set +o noglob
+
+Then start a repl:
+
+java org.armedbear.lisp.Main
+
+================================================================
+Using WebDriver
+
+(let* ((driver (jnew "org.openqa.selenium.htmlunit.HtmlUnitDriver"))
+       (h1     (progn (jcall "get" driver "http://localhost:8000")
+                      (jcall "findElement" driver (jstatic "tagName" "org.openqa.selenium.By" "h1")))))
+  (jcall "getText" h1))
+
+=> "Moo Foo"
