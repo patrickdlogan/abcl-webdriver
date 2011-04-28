@@ -14,9 +14,12 @@
 (ql:quickload "lisp-unit")
 (use-package 'lisp-unit)
 
-(defun make-html-unit-driver ()
+(defun make-html-unit-driver (&key enable-javascript)
   "Return a new instance of org.openqa.selenium.HtmlUnitDriver"
-  (jnew "org.openqa.selenium.htmlunit.HtmlUnitDriver"))
+  (if enable-javascript
+      (let ((caps (jstatic "htmlUnitWithJavascript" "org.openqa.selenium.remote.DesiredCapabilities")))
+	(jnew "org.openqa.selenium.htmlunit.HtmlUnitDriver" caps))
+    (jnew "org.openqa.selenium.htmlunit.HtmlUnitDriver")))
 
 (defun load-page (driver url)
   "Use the given driver to HTTP GET the url. The result is loaded into the driver's browser."
@@ -30,10 +33,19 @@
   "Return the inner text of the given element."
   (jcall "getText" elem))
 
+(defun exec-script (driver script)
+  "Return the result of executing the javascript string in the page that is currently loaded in the driver. The script should terminate with a return statement or the result will be null."
+  (jcall "executeScript" driver script (jnew-array "java.lang.Object" 0)))
+
 (define-test test-my-max
   (assert-equal "Moo Foo" (let* ((driver (make-html-unit-driver))
 				 (elem   (progn (load-page driver "http://localhost:8000")
 						(find-element-by-tag driver "h1"))))
 			    (get-text elem))))
+
+(define-test test-javascript
+  (assert-equal 5 (let* ((driver (make-html-unit-driver :enable-javascript t)))
+		    (load-page driver "http://localhost:8000")
+		    (exec-script driver "return 2 + 3"))))
 
 ;(run-tests)
