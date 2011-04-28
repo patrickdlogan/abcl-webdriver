@@ -10,6 +10,8 @@ Dependencies
 
 * Install java 6
 * Download Armed Bear Common Lisp
+* Install quicklisp
+* Use quicklisp to install lisp-unit
 * Download WebDriver (bundled into selenium-java-2.0b3.zip)
 * Copy abcl.jar, selenium-java-2.0b3.jar, and the selenium-2 dependencies to ./lib
 * Install and run a web server serving files from ./public (in this example, using port 8080)
